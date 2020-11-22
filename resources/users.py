@@ -51,6 +51,11 @@ class UserList(UserBase):
 		else:
 			raise Exception('username sudah terdaftar')
 
+	@jwt_required
+	def get(self):
+		return {'message': 'ini bagian yang terproteksi'}
+
+
 class User(UserBase):
 	def post(self):
 		args =self.reqparse.parse_args()
@@ -63,7 +68,8 @@ class User(UserBase):
 		except models.User.DoesNotExist:
 			return {'message' : 'user or password is wrong!'}
 		else:
-			return {'message' : 'berhasil signin'}
+			access_token = create_access_token(identity = username)
+			return {'message' : 'berhasil signin', 'access_token': access_token}
 	
 
 
