@@ -3,7 +3,17 @@ from peewee import *
 
 DATABASE = SqliteDatabase('tweets.db')
 
-class Message(Model):
+class BaseModel(Model):
+	class Meta:
+		database = DATABASE
+
+class User(BaseModel):
+	username = CharField(unique=True)
+	password = CharField()
+		
+
+class Message(BaseModel):
+	user_id = ForeignKeyField(User,  backref='messages')
 	content = TextField()
 	published_at = DateTimeField(default = datetime.datetime.now())
 
@@ -13,5 +23,5 @@ class Message(Model):
 
 def initialize():
 	DATABASE.connect()
-	DATABASE.create_tables([Message], safe=True)
+	DATABASE.create_tables([User,Message], safe=True)
 	DATABASE.close()
